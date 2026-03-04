@@ -51,7 +51,7 @@ public:
 
 
 private:
-  void node_control_callback(const std_msgs::msg::String::SharedPtr _ptrstring){//lz:关闭节点回调函数
+  void node_control_callback(const std_msgs::msg::String::SharedPtr _ptrstring){// callback to shut down node
       if(_ptrstring->data == "hesailidar_stop" || _ptrstring->data == "all_stop"){
           rclcpp::shutdown();
           std::cout<<"\033[1;31m"<<"HesaiLidar is forced to stop"<<"\033[0m"<<std::endl;
@@ -194,7 +194,7 @@ private:
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr lidarPublisher;
   rclcpp::Publisher<hesai_lidar::msg::PandarScan>::SharedPtr packetPublisher;
 
-  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_node_control;//lz:订阅关闭节点的消息
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr sub_node_control;// subscription for node shutdown command
 
   rclcpp::TimerBase::SharedPtr timer_;
   PandarGeneralSDK* hsdk;

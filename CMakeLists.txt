@@ -36,7 +36,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   DEPENDENCIES builtin_interfaces 
 )
 
-# ライブラリのパス設定
+# Set library paths based on architecture
 if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" OR ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
   set(LIB_DIR ${CMAKE_BINARY_DIR}/lib/arm)
   set(SOURCE_LIB_DIR ${CMAKE_SOURCE_DIR}/lib/arm)
@@ -47,12 +47,12 @@ else()
   message(STATUS "Configuring for x86_64 architecture")
 endif()
 
-# 必要なライブラリをビルドディレクトリにコピー (configure時に実行)
+# Copy precompiled libraries to build directory at configure time
 file(MAKE_DIRECTORY ${LIB_DIR})
 file(COPY ${SOURCE_LIB_DIR}/libPandarGeneral.so DESTINATION ${LIB_DIR})
 file(COPY ${SOURCE_LIB_DIR}/libPandarGeneralSDK.so DESTINATION ${LIB_DIR})
 
-# hesai_lidar_node 実行ファイル
+# hesai_lidar_node executable
 add_executable(hesai_lidar_node
     src/main_ros2.cc
 )
@@ -74,7 +74,7 @@ ament_target_dependencies(hesai_lidar_node
   "rclcpp_components"
 )
 
-# ヘッダーファイルのディレクトリを設定
+# Set header file include directories
 target_include_directories(hesai_lidar_node PRIVATE
     src/HesaiLidar_General_SDK/include
     src/HesaiLidar_General_SDK/src/PandarGeneralRaw/include
@@ -82,7 +82,7 @@ target_include_directories(hesai_lidar_node PRIVATE
     ${Boost_INCLUDE_DIRS}
 )
 
-# コピーされたライブラリをリンク
+# Link against precompiled libraries
 target_link_directories(hesai_lidar_node PRIVATE ${LIB_DIR})
 target_link_libraries(hesai_lidar_node 
     ${PCL_IO_LIBRARIES}
@@ -91,20 +91,19 @@ target_link_libraries(hesai_lidar_node
     PandarGeneralSDK
 )
 
-# この行を削除
 # rosidl_get_typesupport_target(cpp_typesupport_target "rosidl_typesupport_cpp")
 
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
 target_link_libraries(hesai_lidar_node ${cpp_typesupport_target})
 
-# ライブラリと実行ファイルのインストール設定
+# Install executable
 install(TARGETS hesai_lidar_node
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch
   DESTINATION share/${PROJECT_NAME})
 
-# ビルドされたライブラリをインストールディレクトリにコピー
+# Install precompiled runtime libraries
 install(DIRECTORY ${LIB_DIR}/
   DESTINATION lib/${PROJECT_NAME}
 )
