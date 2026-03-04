@@ -47,13 +47,10 @@ else()
   message(STATUS "Configuring for x86_64 architecture")
 endif()
 
-# 必要なライブラリをビルドディレクトリにコピー
-add_custom_command(
-  TARGET ${PROJECT_NAME} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${LIB_DIR}
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SOURCE_LIB_DIR}/libPandarGeneral.so ${LIB_DIR}
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SOURCE_LIB_DIR}/libPandarGeneralSDK.so ${LIB_DIR}
-)
+# 必要なライブラリをビルドディレクトリにコピー (configure時に実行)
+file(MAKE_DIRECTORY ${LIB_DIR})
+file(COPY ${SOURCE_LIB_DIR}/libPandarGeneral.so DESTINATION ${LIB_DIR})
+file(COPY ${SOURCE_LIB_DIR}/libPandarGeneralSDK.so DESTINATION ${LIB_DIR})
 
 # hesai_lidar_node 実行ファイル
 add_executable(hesai_lidar_node
